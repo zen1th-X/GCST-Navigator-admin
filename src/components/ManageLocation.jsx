@@ -18,6 +18,10 @@ const ManageLocation = ({ onLogout }) => {
 
   const tabs = ['All Floors', 'Floor 1', 'Floor 2', 'Floor 3', 'Floor 4'];
 
+  const filteredLocations = activeTab === 'All Floors'
+    ? locations
+    : locations.filter(loc => loc.floor === activeTab);
+
   return (
     <div className="dashboard-container">
       {/* Top Navbar */}
@@ -42,11 +46,22 @@ const ManageLocation = ({ onLogout }) => {
       <main className="dashboard-main">
         {/* Header Section */}
         <div className="manage-header">
-          <span className="admin-subtitle">ADMIN SYSTEM</span>
+          <span className="admin-subtitle">ADMINISTRATION PORTAL</span>
           <h1 className="manage-title">Manage Locations</h1>
+          <div className="search-bar-wrapper">
+            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search room or code..."
+              className="search-input"
+            />
+          </div>
         </div>
 
-        {/* Filters & Search */}
+        {/* Controls Section */}
         <div className="controls-section">
           <div className="floor-tabs">
             {tabs.map((tab) => (
@@ -60,42 +75,37 @@ const ManageLocation = ({ onLogout }) => {
             ))}
           </div>
 
-          <div className="search-filter-row">
-            <div className="search-bar-wrapper">
-              <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search room or code..."
-                className="search-input"
-              />
+          <div className="results-filter-row">
+            <div className="results-info">
+              <span className="results-count">{filteredLocations.length} Destinations</span>
+              <span className="results-divider"> • </span>
+              <span className="results-view">Current View</span>
             </div>
             <button className="filter-btn">
-              Filter
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
+              Filter
             </button>
           </div>
         </div>
 
         {/* Location Grid */}
         <div className="location-grid">
-          {locations.map((loc) => (
+          {filteredLocations.map((loc) => (
             <div key={loc.id} className="location-card">
               <div className="card-left">
                 <div className={`icon-wrapper ${loc.colorClass}`}>
                   <img src={loc.icon} alt={loc.name} className="loc-icon" />
                 </div>
-                <div className="status-badge">{loc.status}</div>
+                
               </div>
               <div className="card-content">
                 <h3 className="loc-name">{loc.name}</h3>
                 <p className="loc-meta">
                   {loc.building} • {loc.floor} • {loc.id}
                 </p>
+                <div className="status-badge">{loc.status}</div>
               </div>
               <div className="card-actions">
                 <button className="action-btn" aria-label="Edit Location">
