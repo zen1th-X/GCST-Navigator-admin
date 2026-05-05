@@ -1,0 +1,139 @@
+import { useState, useCallback } from 'react';
+import { login as loginService } from '../services/authService';
+
+/**
+ * Custom hook for login form state management and validation.
+ * Handles form state, validation, error display, and submission.
+ */
+const useLoginForm = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    remember: false,
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitResult, setSubmitResult] = useState(null);
+
+  /**
+   * Validates a single field and returns an error message or empty string.
+   */
+  const validateField = useCallback((name, value) => {
+    switch (name) {
+      case 'email': {
+        if (!value.trim()) return 'Email is required';
+        // Require valid email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return 'Please enter a valid email address';
+        return '';
+      }
+      case 'password': {
+        if (!value) return 'Password is required';
+        if (value.length < 8) return 'Password must be at least 8 characters';
+        return '';
+      }
+      default:
+        return '';
+    }
+  }, []);
+
+  /**
+   * Validates the entire form. Returns true if valid.
+   */
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+    const emailError = validateField('email', formData.email);
+    const passwordError = validateField('password', formData.password);
+
+    if (emailError) newErrors.email = emailError;
+    if (passwordError) newErrors.password = passwordError;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData, validateField]);
+
+  /**
+   * Handles input changes and clears field-specific errors on type.
+   */
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
+    const fieldValue = type === 'checkbox' ? checked : value;
+
+    setFormData((prev) => ({ ...prev, [name]: fieldValue }));
+
+    // Clear the error for this field as user types
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+
+    // Clear submit result on any change
+    if (submitResult) setSubmitResult(null);
+  }, [errors, submitResult]);
+
+  /**
+   * Validates a field on blur.
+   */
+  const handleBlur = useCallback((e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    if (error) {
+      setErrors((prev) => ({ ...prev, [name]: error }));
+    }
+  }, [validateField]);
+
+  /**
+   * Handles form submission.
+   */
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setSubmitResult(null);
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const result = await loginService(formData.email, formData.password, formData.remember);
+      setSubmitResult({ type: 'success', message: result.message });
+
+      // FUTURE: Redirect to dashboard
+      // window.location.href = '/admin/dashboard';
+      console.log('[Login] Success:', result);
+    } catch (error) {
+      setSubmitResult({
+        type: 'error',
+        message: error.message || 'An unexpected error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, validateForm]);
+
+  /**
+   * Resets the form to initial state.
+   */
+  const resetForm = useCallback(() => {
+    setFormData({ email: '', password: '', remember: false });
+    setErrors({});
+    setSubmitResult(null);
+    setIsLoading(false);
+  }, []);
+
+  return {
+    formData,
+    errors,
+    isLoading,
+    submitResult,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    resetForm,
+  };
+};
+
+export default useLoginForm;
