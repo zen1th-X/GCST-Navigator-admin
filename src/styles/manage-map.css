@@ -1,0 +1,644 @@
+/* ==========================================================================
+   Manage Map — Floor Plan Editor View
+   Replicates the reference design exactly
+   ========================================================================== */
+
+/* ── Page ─────────────────────────────────────────────────────────────────── */
+.mm-page {
+  background: #eef2f7;
+}
+
+.mm-main {
+  flex: 1;
+  padding: 24px 32px 32px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Content Card (white rounded container) ───────────────────────────────── */
+.mm-content-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 1100px;
+  padding: 0px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: mmFadeIn 0.45s ease both;
+}
+
+/* ── Top Bar (search + back) ──────────────────────────────────────────────── */
+.mm-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  margin-left: 90px;
+}
+
+.mm-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 0 12px;
+  flex: 1;
+  max-width: 480px;
+  border: 1.5px solid #e2e8f0;
+  transition: border-color 0.2s;
+}
+
+.mm-search-wrapper:focus-within {
+  border-color: #1a56db;
+}
+
+.mm-search-icon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.mm-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 10px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  outline: none;
+  font-family: inherit;
+}
+
+.mm-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.mm-filter-icon-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mm-filter-icon-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.mm-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #1a56db;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mm-back-btn:hover {
+  background: #eff4ff;
+}
+
+/* ── Body (map + panel + floor selector) ──────────────────────────────────── */
+.mm-body {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Map Area ─────────────────────────────────────────────────────────────── */
+.mm-map-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.mm-map-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.mm-map-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  margin-top: -30px;
+}
+
+/* ── Map Labels (clickable text on the map) ───────────────────────────────── */
+.mm-map-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1.25;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: color 0.15s, background 0.15s;
+  z-index: 5;
+  white-space: nowrap;
+}
+
+.mm-map-label:hover {
+  color: #1a56db;
+  background: rgba(26, 86, 219, 0.08);
+}
+
+.mm-map-label-active {
+  color: #1a56db;
+  font-weight: 700;
+}
+
+/* ── Location Pin ─────────────────────────────────────────────────────────── */
+.mm-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 10;
+  pointer-events: none;
+  animation: mmPinDrop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  filter: drop-shadow(0 2px 4px rgba(229, 62, 62, 0.35));
+}
+
+@keyframes mmPinDrop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -140%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
+}
+
+/* ── Selected Marker Panel ────────────────────────────────────────────────── */
+.mm-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: mmSlideIn 0.3s ease both;
+}
+
+@keyframes mmSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mm-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mm-panel-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #1a56db;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.mm-panel-id {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.mm-panel-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  transition: color 0.15s, background 0.15s;
+}
+
+.mm-panel-close:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+/* Panel Fields */
+.mm-panel-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mm-panel-field-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mm-panel-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #1e293b;
+  font-size: 0.92rem;
+  font-weight: 500;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mm-panel-input:focus {
+  outline: none;
+  border-color: #1a56db;
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+  background: #ffffff;
+}
+
+.mm-panel-input[readonly] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* Status Toggle */
+.mm-status-toggle {
+  display: flex;
+  gap: 0;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mm-status-btn {
+  flex: 1;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.mm-status-btn:first-child {
+  border-right: 1.5px solid #e2e8f0;
+}
+
+.mm-status-active {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488 !important;
+}
+
+.mm-status-maintenance {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b !important;
+}
+
+/* Floor Select */
+.mm-floor-select-wrapper {
+  position: relative;
+}
+
+.mm-floor-select {
+  width: 100%;
+  padding: 12px 14px;
+  padding-right: 36px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #1e293b;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.mm-floor-select:focus {
+  outline: none;
+  border-color: #1a56db;
+}
+
+.mm-select-chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+/* Update Waypoint Button */
+.mm-update-btn {
+  width: 100%;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #003FB1, #1A56DB);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 63, 177, 0.35);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
+
+.mm-update-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #003099, #1545b5);
+  box-shadow: 0 6px 20px rgba(0, 63, 177, 0.45);
+  transform: translateY(-1px);
+}
+
+.mm-update-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mm-update-btn-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+/* ── Floor Level Selector (right side) ────────────────────────────────────── */
+.mm-floor-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid rgba(226, 232, 240, 0.8);
+}
+
+.mm-floor-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.mm-floor-btn:hover {
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.mm-floor-btn-active {
+  border-color: #1a56db;
+  color: #1a56db;
+  background: #eff4ff;
+}
+
+.mm-layers-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mm-layers-btn:hover {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+/* ── Right Column (Panel + Mode Toggle) ───────────────────────────────────── */
+.mm-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 280px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.mm-mode-toggle-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mm-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  margin-bottom: 37px;
+}
+
+/* Mode Toggle */
+.mm-mode-toggle {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mm-mode-btn {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.mm-mode-btn-active {
+  background: #1a56db;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(26, 86, 219, 0.3);
+}
+
+/* ── Animation ────────────────────────────────────────────────────────────── */
+@keyframes mmFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — Tablet
+   ========================================================================== */
+@media (max-width: 900px) {
+  .mm-main {
+    padding: 16px 16px 24px;
+  }
+
+  .mm-content-card {
+    padding: 20px 20px 16px;
+  }
+
+  .mm-body {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mm-panel {
+    width: 100%;
+  }
+
+  .mm-floor-selector {
+    flex-direction: row;
+    order: -1;
+    gap: 8px;
+  }
+
+  .mm-layers-btn {
+    margin-top: 0;
+    margin-left: 8px;
+  }
+
+  .mm-map-container {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — Mobile
+   ========================================================================== */
+@media (max-width: 576px) {
+  .mm-main {
+    padding: 12px 10px 20px;
+  }
+
+  .mm-content-card {
+    padding: 16px 14px 12px;
+    border-radius: 14px;
+  }
+
+  .mm-top-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .mm-search-wrapper {
+    max-width: 100%;
+    order: 2;
+  }
+
+  .mm-back-btn {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .mm-map-label {
+    font-size: 0.55rem;
+  }
+
+  .mm-panel {
+    padding: 18px;
+  }
+
+  .mm-panel-id {
+    font-size: 1.25rem;
+  }
+
+  .mm-toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .mm-toolbar-left, .mm-toolbar-right {
+    width: 100%;
+    justify-content: center;
+  }
+}

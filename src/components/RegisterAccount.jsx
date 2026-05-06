@@ -31,8 +31,8 @@ const RegisterAccount = ({ onLogin }) => {
           alt="Granby Colleges of Science and Technology Logo"
           className="register-logo"
         />
-        <h2 className="register-title">Create Admin Account</h2>
-        <p className="register-subtitle">Join the campus management team</p>
+        <h2 className="register-title">Create Super Admin Account</h2>
+        <p className="register-subtitle">Lead and manage Granby’s navigation operations.</p>
       </div>
 
       <form className="register-form" onSubmit={handleSubmit}>

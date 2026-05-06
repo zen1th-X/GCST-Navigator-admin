@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AccountCenter from './AccountCenter';
+import ManageMap from './ManageMap';
 import '../styles/dashboard.css';
 
 const DEFAULT_LOCATIONS = [
@@ -17,6 +18,7 @@ const ManageLocation = ({ onLogout }) => {
   const [locations, setLocations] = useState(DEFAULT_LOCATIONS);
   const [activeTab, setActiveTab] = useState('All Floors');
   const [showAccountCenter, setShowAccountCenter] = useState(false);
+  const [selectedMapLocation, setSelectedMapLocation] = useState(null);
 
   const tabs = ['All Floors', 'Floor 1', 'Floor 2', 'Floor 3', 'Floor 4'];
 
@@ -30,6 +32,20 @@ const ManageLocation = ({ onLogout }) => {
       <AccountCenter
         onBack={() => setShowAccountCenter(false)}
         onLogout={onLogout}
+      />
+    );
+  }
+
+  // Show Manage Map page
+  if (selectedMapLocation) {
+    return (
+      <ManageMap
+        location={selectedMapLocation}
+        onBack={() => setSelectedMapLocation(null)}
+        onAccountCenter={() => {
+          setSelectedMapLocation(null);
+          setShowAccountCenter(true);
+        }}
       />
     );
   }
@@ -105,7 +121,7 @@ const ManageLocation = ({ onLogout }) => {
         {/* Location Grid */}
         <div className="location-grid">
           {filteredLocations.map((loc) => (
-            <div key={loc.id} className="location-card">
+            <div key={loc.id} className="location-card" onClick={() => setSelectedMapLocation(loc)} style={{ cursor: 'pointer' }}>
               <div className="card-left">
                 <div className={`icon-wrapper ${loc.colorClass}`}>
                   <img src={loc.icon} alt={loc.name} className="loc-icon" />

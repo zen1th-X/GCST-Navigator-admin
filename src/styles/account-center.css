@@ -404,6 +404,230 @@
 }
 
 /* ==========================================================================
+   MODALS — PIN Verification & Register Admin
+   ========================================================================== */
+
+/* Overlay */
+.ac-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: acOverlayIn 0.25s ease both;
+  padding: 20px;
+}
+
+@keyframes acOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Card */
+.ac-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 36px 32px 32px;
+  max-width: 380px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: acModalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.ac-modal-wide {
+  max-width: 420px;
+}
+
+@keyframes acModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ac-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  transition: color 0.15s, background 0.15s;
+}
+
+.ac-modal-close:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+/* Modal Icon */
+.ac-modal-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eff4ff, #dbeafe);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.ac-modal-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.ac-modal-icon-success {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  color: #0d9488;
+}
+
+.ac-modal-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.ac-modal-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* PIN Inputs */
+.ac-pin-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.ac-pin-digit {
+  width: 44px;
+  height: 52px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.ac-pin-digit:focus {
+  border-color: #1a56db;
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
+  background: #ffffff;
+}
+
+.ac-pin-digit.ac-pin-error {
+  border-color: #ef4444;
+  background: #fef2f2;
+  animation: acPinShake 0.4s ease;
+}
+
+.ac-pin-error-msg {
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  margin-top: -8px;
+}
+
+@keyframes acPinShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Modal Submit Button */
+.ac-modal-submit {
+  width: 100%;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #003FB1, #1A56DB);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 63, 177, 0.3);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.ac-modal-submit:hover {
+  box-shadow: 0 6px 20px rgba(0, 63, 177, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Register Form */
+.ac-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.ac-register-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Success State */
+.ac-register-success {
+  text-align: center;
+  padding: 12px 0 0;
+}
+
+.ac-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin: 0 auto 20px;
+  animation: acSuccessPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes acSuccessPop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
    RESPONSIVE — Tablet
    ========================================================================== */
 @media (max-width: 860px) {

@@ -81,9 +81,9 @@ const PinVerification = ({ onBack, onVerify }) => {
           </div>
         </div>
 
-        <h2 className="pin-title">Admin Verification</h2>
+        <h2 className="pin-title">Super Admin Verification</h2>
         <p className="pin-subtitle">
-          Please enter the 6-digit administrative PIN provided by the IT department to proceed.
+          Please enter the 6-digit administrative PIN
         </p>
 
         <div className="pin-inputs">

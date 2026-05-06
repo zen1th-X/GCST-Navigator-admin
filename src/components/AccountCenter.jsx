@@ -47,7 +47,18 @@ const AccountCenter = ({ onBack, onLogout }) => {
   });
 
   // Admin list state — for future CRUD operations
-  const [admins] = useState(MOCK_ADMIN_LIST);
+  const [admins, setAdmins] = useState(MOCK_ADMIN_LIST);
+
+  // ─── Invite Admin Flow State ────────────────────────────────────────────────
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [pinValue, setPinValue] = useState(['', '', '', '', '', '']);
+  const [pinError, setPinError] = useState('');
+  const [newAdmin, setNewAdmin] = useState({ fullName: '', email: '', password: '' });
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+
+  // Mock PIN for verification (replace with backend check)
+  const CORRECT_PIN = '123456';
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -70,9 +81,96 @@ const AccountCenter = ({ onBack, onLogout }) => {
     console.log('[AccountCenter] Change Password requested');
   };
 
+  // ─── PIN Verification Handlers ──────────────────────────────────────────────
   const handleInviteAdmin = () => {
-    // TODO: Open invite admin modal / flow
-    console.log('[AccountCenter] Invite New Admin requested');
+    // Reset state and open PIN modal
+    setPinValue(['', '', '', '', '', '']);
+    setPinError('');
+    setShowPinModal(true);
+  };
+
+  const handlePinChange = (index, value) => {
+    if (value.length > 1) value = value.slice(-1);
+    if (value && !/^\d$/.test(value)) return;
+    const newPin = [...pinValue];
+    newPin[index] = value;
+    setPinValue(newPin);
+    setPinError('');
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const next = document.getElementById(`ac-pin-${index + 1}`);
+      if (next) next.focus();
+    }
+  };
+
+  const handlePinKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !pinValue[index] && index > 0) {
+      const prev = document.getElementById(`ac-pin-${index - 1}`);
+      if (prev) prev.focus();
+    }
+  };
+
+  const handlePinSubmit = () => {
+    const enteredPin = pinValue.join('');
+    if (enteredPin.length < 6) {
+      setPinError('Please enter all 6 digits');
+      return;
+    }
+    if (enteredPin !== CORRECT_PIN) {
+      setPinError('Incorrect PIN. Please try again.');
+      setPinValue(['', '', '', '', '', '']);
+      // Refocus first input
+      setTimeout(() => {
+        const first = document.getElementById('ac-pin-0');
+        if (first) first.focus();
+      }, 100);
+      return;
+    }
+    // PIN verified — show register form
+    setShowPinModal(false);
+    setNewAdmin({ fullName: '', email: '', password: '' });
+    setRegisterSuccess(false);
+    setShowRegisterForm(true);
+  };
+
+  const handleClosePinModal = () => {
+    setShowPinModal(false);
+    setPinValue(['', '', '', '', '', '']);
+    setPinError('');
+  };
+
+  // ─── Register Admin Handlers ───────────────────────────────────────────────
+  const handleRegisterAdmin = (e) => {
+    e.preventDefault();
+    if (!newAdmin.fullName || !newAdmin.email || !newAdmin.password) return;
+
+    // Generate initials from full name
+    const initials = newAdmin.fullName
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+
+    const newEntry = {
+      id: `usr_${Date.now()}`,
+      fullName: newAdmin.fullName,
+      role: 'Editor',
+      initials,
+      avatarColor: '#0d9488',
+    };
+
+    // TODO: Send newAdmin to backend API
+    console.log('[AccountCenter] Register Admin:', newAdmin);
+    setAdmins((prev) => [...prev, newEntry]);
+    setRegisterSuccess(true);
+  };
+
+  const handleCloseRegisterForm = () => {
+    setShowRegisterForm(false);
+    setNewAdmin({ fullName: '', email: '', password: '' });
+    setRegisterSuccess(false);
   };
 
   const handleSignOut = () => {
@@ -294,6 +392,137 @@ const AccountCenter = ({ onBack, onLogout }) => {
           </button>
         </div>
       </main>
+
+      {/* ── PIN Verification Modal ──────────────────────────────────────────── */}
+      {showPinModal && (
+        <div className="ac-modal-overlay" onClick={handleClosePinModal}>
+          <div className="ac-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="ac-modal-close" onClick={handleClosePinModal} aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="ac-modal-icon-wrap">
+              <img src="/assets/Change Pin Icon.png" alt="" className="ac-modal-icon" />
+            </div>
+            <h2 className="ac-modal-title">PIN Verification</h2>
+            <p className="ac-modal-desc">
+              Enter your 6-digit Super Admin PIN to authorize adding a new administrator.
+            </p>
+
+            <div className="ac-pin-inputs">
+              {pinValue.map((digit, i) => (
+                <input
+                  key={i}
+                  id={`ac-pin-${i}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  className={`ac-pin-digit ${pinError ? 'ac-pin-error' : ''}`}
+                  value={digit}
+                  onChange={(e) => handlePinChange(i, e.target.value)}
+                  onKeyDown={(e) => handlePinKeyDown(i, e)}
+                  autoFocus={i === 0}
+                />
+              ))}
+            </div>
+
+            {pinError && <p className="ac-pin-error-msg">{pinError}</p>}
+
+            <button className="ac-modal-submit" onClick={handlePinSubmit}>
+              Verify PIN
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Register New Admin Modal ────────────────────────────────────────── */}
+      {showRegisterForm && (
+        <div className="ac-modal-overlay" onClick={handleCloseRegisterForm}>
+          <div className="ac-modal ac-modal-wide" onClick={(e) => e.stopPropagation()}>
+            <button className="ac-modal-close" onClick={handleCloseRegisterForm} aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {!registerSuccess ? (
+              <>
+                <div className="ac-modal-icon-wrap ac-modal-icon-success">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <line x1="20" y1="8" x2="20" y2="14" />
+                    <line x1="23" y1="11" x2="17" y2="11" />
+                  </svg>
+                </div>
+                <h2 className="ac-modal-title">Register New Admin</h2>
+                <p className="ac-modal-desc">
+                  Create an Admin Editor account. They will have editing permissions for locations and waypoints.
+                </p>
+
+                <form onSubmit={handleRegisterAdmin} className="ac-register-form">
+                  <div className="ac-register-field">
+                    <label className="ac-field-label">FULL NAME</label>
+                    <input
+                      type="text"
+                      className="ac-field-input"
+                      value={newAdmin.fullName}
+                      onChange={(e) => setNewAdmin((p) => ({ ...p, fullName: e.target.value }))}
+                      placeholder="e.g. Juan Dela Cruz"
+                      required
+                    />
+                  </div>
+                  <div className="ac-register-field">
+                    <label className="ac-field-label">EMAIL ADDRESS</label>
+                    <input
+                      type="email"
+                      className="ac-field-input"
+                      value={newAdmin.email}
+                      onChange={(e) => setNewAdmin((p) => ({ ...p, email: e.target.value }))}
+                      placeholder="admin@granbycolleges.edu"
+                      required
+                    />
+                  </div>
+                  <div className="ac-register-field">
+                    <label className="ac-field-label">TEMPORARY PASSWORD</label>
+                    <input
+                      type="password"
+                      className="ac-field-input"
+                      value={newAdmin.password}
+                      onChange={(e) => setNewAdmin((p) => ({ ...p, password: e.target.value }))}
+                      placeholder="Minimum 8 characters"
+                      minLength={8}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="ac-modal-submit">
+                    Register Admin Editor
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="ac-register-success">
+                <div className="ac-success-icon">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <h2 className="ac-modal-title">Admin Registered!</h2>
+                <p className="ac-modal-desc">
+                  <strong>{newAdmin.fullName}</strong> has been added as an <strong>Admin Editor</strong>. They can now sign in with their credentials.
+                </p>
+                <button className="ac-modal-submit" onClick={handleCloseRegisterForm}>
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
