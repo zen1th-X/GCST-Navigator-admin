@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AccountCenter from './AccountCenter';
 import '../styles/dashboard.css';
 
 const DEFAULT_LOCATIONS = [
@@ -15,12 +16,23 @@ const DEFAULT_LOCATIONS = [
 const ManageLocation = ({ onLogout }) => {
   const [locations, setLocations] = useState(DEFAULT_LOCATIONS);
   const [activeTab, setActiveTab] = useState('All Floors');
+  const [showAccountCenter, setShowAccountCenter] = useState(false);
 
   const tabs = ['All Floors', 'Floor 1', 'Floor 2', 'Floor 3', 'Floor 4'];
 
   const filteredLocations = activeTab === 'All Floors'
     ? locations
     : locations.filter(loc => loc.floor === activeTab);
+
+  // Show Account Center page
+  if (showAccountCenter) {
+    return (
+      <AccountCenter
+        onBack={() => setShowAccountCenter(false)}
+        onLogout={onLogout}
+      />
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -34,7 +46,7 @@ const ManageLocation = ({ onLogout }) => {
           />
           <span className="navbar-title">GCST Navigator</span>
         </div>
-        <button className="profile-btn" onClick={onLogout} aria-label="Profile Menu / Log Out">
+        <button className="profile-btn" onClick={() => setShowAccountCenter(true)} aria-label="Account Center">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
@@ -129,7 +141,7 @@ const ManageLocation = ({ onLogout }) => {
         <div className="campus-banner">
           <div className="banner-content">
             <h2 className="banner-title">Interactive Campus Overview</h2>
-            <p className="banner-subtitle">Review 124 spatially mapped destinations</p>
+            <p className="banner-subtitle">Review 8 spatially mapped destinations</p>
           </div>
           <button className="expand-map-btn">Expand Map View</button>
         </div>

@@ -1,0 +1,504 @@
+/* ==========================================================================
+   Account Center — Responsive Styles
+   Desktop: two-column (Profile+Security left, Permissions right)
+   Mobile:  single column, stacked
+   ========================================================================== */
+
+/* ---- Page Wrapper (reuses .dashboard-container from dashboard.css) ---- */
+.ac-page {
+  background-color: #f0f4fa;
+}
+
+/* Active profile button highlight */
+.ac-profile-btn-active {
+  background-color: #e2e8f0;
+  color: #1a56db;
+  box-shadow: 0 0 0 2px rgba(26, 86, 219, 0.15);
+}
+
+/* ---- Main Content ---- */
+.ac-main {
+  flex: 1;
+  padding: 40px 48px 60px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ---- Page Header ---- */
+.ac-page-header {
+  margin-bottom: 32px;
+  animation: acFadeIn 0.45s ease both;
+}
+
+.ac-page-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.ac-page-subtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ---- Two-Column Grid ---- */
+.ac-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 28px;
+  align-items: start;
+  animation: acFadeIn 0.55s ease both;
+  animation-delay: 0.08s;
+}
+
+.ac-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.ac-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ---- Card ---- */
+.ac-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.25s ease;
+}
+
+.ac-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.ac-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.ac-card-icon {
+  color: #475569;
+}
+
+.ac-card-icon-shield {
+  color: #ca8a04;
+}
+
+.ac-card-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ac-security-icon-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.ac-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ---- Profile Form ---- */
+.ac-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ac-profile-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.ac-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ac-field-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ac-field-input {
+  width: 100%;
+  padding: 13px 14px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #1e293b;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ac-field-input::placeholder {
+  color: #94a3b8;
+}
+
+.ac-field-input:hover {
+  border-color: #cbd5e1;
+}
+
+.ac-field-input:focus {
+  outline: none;
+  border-color: #1a56db;
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+  background: #ffffff;
+}
+
+.ac-update-btn {
+  align-self: flex-start;
+  padding: 11px 24px;
+  background: #1a56db;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(26, 86, 219, 0.3);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.ac-update-btn:hover {
+  background: #1545b5;
+  box-shadow: 0 6px 20px rgba(26, 86, 219, 0.4);
+  transform: translateY(-1px);
+}
+
+.ac-update-btn:active {
+  transform: translateY(0);
+}
+
+/* ---- Security & Privacy ---- */
+.ac-security-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-security-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+
+.ac-security-item:hover {
+  background: #f1f5f9;
+}
+
+.ac-security-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.ac-security-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ac-security-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ac-security-desc {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.ac-security-action {
+  background: none;
+  border: none;
+  color: #1a56db;
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ac-security-action:hover {
+  background: #eff4ff;
+  color: #1545b5;
+}
+
+/* ---- Admin Permissions ---- */
+.ac-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ac-admin-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ac-admin-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.ac-admin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ac-admin-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.ac-admin-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.ac-role-super {
+  color: #1a56db;
+}
+
+.ac-role-editor {
+  color: #64748b;
+}
+
+/* Invite New Admin Button */
+.ac-invite-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.ac-invite-btn svg {
+  color: inherit;
+}
+
+.ac-invite-btn:hover {
+  border-color: #1a56db;
+  color: #1a56db;
+  background: #eff4ff;
+}
+
+/* ---- Sign Out ---- */
+.ac-signout-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+  animation: acFadeIn 0.6s ease both;
+  animation-delay: 0.15s;
+}
+
+.ac-signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 40px;
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.ac-signout-btn:hover {
+  background: #0f172a;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.35);
+  transform: translateY(-1px);
+}
+
+.ac-signout-btn:active {
+  transform: translateY(0);
+}
+
+/* ---- Animation ---- */
+@keyframes acFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — Tablet
+   ========================================================================== */
+@media (max-width: 860px) {
+  .ac-main {
+    padding: 32px 28px 48px;
+  }
+
+  .ac-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ac-page-title {
+    font-size: 1.85rem;
+  }
+
+  .ac-profile-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — Mobile
+   ========================================================================== */
+@media (max-width: 576px) {
+  .ac-main {
+    padding: 24px 20px 40px;
+  }
+
+  .ac-page-title {
+    font-size: 1.6rem;
+  }
+
+  .ac-page-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .ac-card {
+    padding: 22px 20px 20px;
+    border-radius: 14px;
+  }
+
+  .ac-card-title {
+    font-size: 1.05rem;
+  }
+
+  .ac-profile-fields {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .ac-field-input {
+    font-size: 16px; /* Prevent iOS zoom */
+    padding: 12px 14px;
+  }
+
+  .ac-update-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .ac-security-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .ac-security-desc {
+    font-size: 0.72rem;
+  }
+
+  .ac-signout-wrapper {
+    margin-top: 36px;
+  }
+
+  .ac-signout-btn {
+    width: 100%;
+    justify-content: center;
+    max-width: 280px;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — Very small mobile
+   ========================================================================== */
+@media (max-width: 360px) {
+  .ac-main {
+    padding: 20px 16px 32px;
+  }
+
+  .ac-page-title {
+    font-size: 1.4rem;
+  }
+
+  .ac-card {
+    padding: 18px 16px;
+  }
+}

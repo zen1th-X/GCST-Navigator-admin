@@ -5,15 +5,6 @@ import RegisterAccount from './RegisterAccount';
 import ManageLocation from './ManageLocation';
 import '../styles/login.css';
 
-/**
- * LoginForm Component
- * 
- * GCST Navigator admin login page with:
- * - Top navbar with logo + brand name
- * - Two-column desktop layout (info panel + login form)
- * - Single-column mobile layout (login form only)
- * - Clean, light-themed design with blue accents
- */
 const LoginForm = () => {
   const {
     formData,
@@ -77,7 +68,7 @@ const LoginForm = () => {
                   <span className="info-heading-accent">Campus Accessibility</span>.
                 </h1>
                 <p className="info-description">
-                  Manage campus infrastructure, visitor navigation paths, and environmental markers through our universal institutional wayfinding dashboard.
+                  Manage campus locations and control their availability in a centralized wayfinding dashboard for new students and visitors.
                 </p>
                 <div className="info-image-wrapper">
                   <img
@@ -85,18 +76,6 @@ const LoginForm = () => {
                     alt="GCST Campus - Granby Colleges of Science and Technology"
                     className="info-campus-image"
                   />
-                </div>
-                <div className="info-secure-badge">
-                  <div className="secure-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                      <polyline points="9 12 12 15 16 10" />
-                    </svg>
-                  </div>
-                  <div className="secure-text">
-                    <span className="secure-title">Secure Access</span>
-                    <span className="secure-subtitle">Encrypted Multi-factor Authorization</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -113,22 +92,9 @@ const LoginForm = () => {
                     id="form-logo"
                   />
                   <h2 className="form-title">Admin Portal</h2>
-                  <p className="form-subtitle">MANAGE CAMPUS NAVIGATION FOR VISITORS &amp; STUDENTS</p>
+                  <p className="form-subtitle">MANAGE CAMPUS NAVIGATION FOR VISITORS & STUDENTS</p>
                 </div>
 
-                {/* Alert Messages */}
-                {submitResult && (
-                  <div className={`login-alert ${submitResult.type === 'success' ? 'login-alert-success' : 'login-alert-error'}`} id="login-alert">
-                    <span className="alert-icon">
-                      {submitResult.type === 'success' ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
-                      )}
-                    </span>
-                    <span>{submitResult.message}</span>
-                  </div>
-                )}
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="login-form" id="login-form" noValidate>
@@ -267,7 +233,6 @@ const LoginForm = () => {
                 {/* Divider */}
                 <div className="other-views-divider">
                   <span className="divider-line"></span>
-                  <span className="divider-text">OTHER VIEWS</span>
                   <span className="divider-line"></span>
                 </div>
 
