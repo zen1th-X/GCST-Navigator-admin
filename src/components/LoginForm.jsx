@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import useLoginForm from '../hooks/useLoginForm';
 import PinVerification from './PinVerification';
 import RegisterAccount from './RegisterAccount';
-import ManageLocation from './ManageLocation';
+import DashboardOverview from './DashboardOverview';
+import { logout as logoutService, subscribeToAuthChanges } from '../services/authService';
 import '../styles/login.css';
 
 const LoginForm = () => {
@@ -18,9 +19,27 @@ const LoginForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [currentView, setCurrentView] = useState('login'); // 'login', 'pin', 'register', or 'dashboard'
+  const [globalUser, setGlobalUser] = useState(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
 
+  // Restore session on page load
   useEffect(() => {
-    if (submitResult?.type === 'success') {
+    const unsubscribe = subscribeToAuthChanges((user) => {
+      setGlobalUser(user);
+      if (user) {
+        setCurrentView('dashboard');
+      } else if (currentView === 'dashboard') {
+        setCurrentView('login');
+      }
+      setIsAuthenticating(false);
+    });
+    return () => unsubscribe();
+  }, [currentView]);
+
+  // Handle manual login success
+  useEffect(() => {
+    if (submitResult?.type === 'success' && submitResult?.user) {
+      setGlobalUser(submitResult.user);
       setCurrentView('dashboard');
     }
   }, [submitResult]);
@@ -29,8 +48,25 @@ const LoginForm = () => {
     setShowPassword((prev) => !prev);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutService();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+    setCurrentView('login');
+  };
+
+  if (isAuthenticating) {
+    return (
+      <div className="login-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc' }}>
+        <div className="spinner" style={{ width: '50px', height: '50px', borderTopColor: '#1a56db', borderWidth: '4px' }}></div>
+      </div>
+    );
+  }
+
   if (currentView === 'dashboard') {
-    return <ManageLocation onLogout={() => setCurrentView('login')} />;
+    return <DashboardOverview onLogout={handleLogout} user={globalUser} />;
   }
 
   return (
@@ -47,7 +83,7 @@ const LoginForm = () => {
             alt="GCST Logo"
             className="navbar-logo"
           />
-          <span className="navbar-title">GCST Navigator</span>
+          <span className="navbar-title">Library Management of Granby Colleges  of Science & Technology</span>
         </div>
       </nav>
 
@@ -65,10 +101,10 @@ const LoginForm = () => {
                 <span className="info-badge">ADMINISTRATIVE CONSOLE</span>
                 <h1 className="info-heading">
                   Navigate the future of{' '}
-                  <span className="info-heading-accent">Campus Accessibility</span>.
+                  <span className="info-heading-accent">Library Management</span>.
                 </h1>
                 <p className="info-description">
-                  Manage campus locations and control their availability in a centralized wayfinding dashboard for new students and visitors.
+                  Manage intelligent cataloging, automated inventory tracking, borrowing transactions, and AI-powered library operations through an advanced administrative management dashboard.
                 </p>
                 <div className="info-image-wrapper">
                   <img
@@ -92,12 +128,19 @@ const LoginForm = () => {
                     id="form-logo"
                   />
                   <h2 className="form-title">Admin Portal</h2>
-                  <p className="form-subtitle">MANAGE CAMPUS NAVIGATION FOR VISITORS & STUDENTS</p>
+                  <p className="form-subtitle">MANAGE LIBRARY RESOURCES & SERVICES FOR GRANBY COLLEGES OF SCIENCE AND TECHNOLOGY</p>
                 </div>
 
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="login-form" id="login-form" noValidate>
+                  {/* Error Notification */}
+                  {submitResult?.type === 'error' && (
+                    <div className="login-error-notification" style={{ padding: '10px', background: '#fee2e2', color: '#dc2626', border: '1px solid #f87171', borderRadius: '8px', marginBottom: '16px', fontSize: '0.9rem', textAlign: 'center', fontWeight: '500' }}>
+                      {submitResult.message}
+                    </div>
+                  )}
+
                   {/* CSRF Token Placeholder */}
                   <input type="hidden" name="_token" value="" />
 

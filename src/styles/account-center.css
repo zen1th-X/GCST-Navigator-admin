@@ -364,32 +364,8 @@
   animation-delay: 0.15s;
 }
 
-.ac-signout-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 40px;
-  background: #1e293b;
-  color: #ffffff;
-  font-size: 0.92rem;
-  font-weight: 600;
-  font-family: inherit;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-}
 
-.ac-signout-btn:hover {
-  background: #0f172a;
-  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.35);
-  transform: translateY(-1px);
-}
 
-.ac-signout-btn:active {
-  transform: translateY(0);
-}
 
 /* ---- Animation ---- */
 @keyframes acFadeIn {
@@ -699,15 +675,7 @@
     font-size: 0.72rem;
   }
 
-  .ac-signout-wrapper {
-    margin-top: 36px;
-  }
 
-  .ac-signout-btn {
-    width: 100%;
-    justify-content: center;
-    max-width: 280px;
-  }
 }
 
 /* ==========================================================================

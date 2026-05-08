@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/account-center.css';
 
 /**
@@ -39,12 +39,30 @@ const MOCK_ADMIN_LIST = [
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
-const AccountCenter = ({ onBack, onLogout }) => {
+const AccountCenter = ({ onBack, onLogout, user }) => {
   // Profile form state — pre-filled with current user data
   const [profileData, setProfileData] = useState({
-    fullName: MOCK_CURRENT_USER.fullName,
-    email: MOCK_CURRENT_USER.email,
+    fullName: user?.name || user?.fullName || '',
+    email: user?.email || '',
   });
+
+  useEffect(() => {
+    // Debugging to see what user data actually arrived
+    console.log('[AccountCenter] Received user prop:', user);
+    
+    if (user) {
+      setProfileData({
+        fullName: user.name || user.fullName || '',
+        email: user.email || '',
+      });
+    } else {
+      // Fallback in case user bypassed login during testing
+      setProfileData({
+        fullName: 'Test Admin (Not Logged In)',
+        email: 'test@admin.com'
+      });
+    }
+  }, [user]);
 
   // Admin list state — for future CRUD operations
   const [admins, setAdmins] = useState(MOCK_ADMIN_LIST);
@@ -200,38 +218,17 @@ const AccountCenter = ({ onBack, onLogout }) => {
   };
 
   return (
-    <div className="dashboard-container ac-page">
-      {/* ── Top Navbar ────────────────────────────────────────────────────── */}
-      <nav className="dashboard-navbar" id="ac-navbar">
-        <div className="navbar-brand">
-          <img
-            src="/assets/granby logo.jpg"
-            alt="GCST Logo"
-            className="navbar-logo"
-          />
-          <span className="navbar-title">GCST Navigator</span>
-        </div>
-        <button
-          className="profile-btn ac-profile-btn-active"
-          onClick={onBack}
-          aria-label="Back to Dashboard"
-          id="ac-profile-btn"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </button>
-      </nav>
-
+    <div className="ac-page" style={{ height: '100%', overflowY: 'auto' }}>
       {/* ── Main Content ──────────────────────────────────────────────────── */}
-      <main className="ac-main" id="account-center-main">
+      <main className="ac-main" id="account-center-main" style={{ padding: '0', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Page Header */}
         <div className="ac-page-header">
-          <h1 className="ac-page-title">Account Center</h1>
-          <p className="ac-page-subtitle">
-            Manage your administrative profile and other system-wide permissions.
-          </p>
+          <div>
+            <h1 className="ac-page-title">Account Center</h1>
+            <p className="ac-page-subtitle">
+              Manage your administrative profile and other system-wide permissions.
+            </p>
+          </div>
         </div>
 
         {/* Two-Column Grid */}
@@ -377,20 +374,6 @@ const AccountCenter = ({ onBack, onLogout }) => {
         </div>
 
         {/* ── Sign Out Button ──────────────────────────────────────────────── */}
-        <div className="ac-signout-wrapper">
-          <button
-            className="ac-signout-btn"
-            onClick={handleSignOut}
-            id="ac-signout-btn"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            <span>Sign Out</span>
-          </button>
-        </div>
       </main>
 
       {/* ── PIN Verification Modal ──────────────────────────────────────────── */}

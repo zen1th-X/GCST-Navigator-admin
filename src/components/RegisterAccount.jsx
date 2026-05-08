@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { registerSuperAdmin } from '../services/authService';
 
 const RegisterAccount = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,9 @@ const RegisterAccount = ({ onLogin }) => {
     confirmPassword: '',
     agreeTerms: false,
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -15,12 +19,42 @@ const RegisterAccount = ({ onLogin }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+    // Clear errors when typing
+    if (error) setError('');
+    if (success) setSuccess('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Front-end only for now
-    console.log('Registering account with:', formData);
+    
+    // Validation
+    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError('All fields are required.');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (!formData.agreeTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      await registerSuperAdmin(formData.email, formData.password, formData.fullName);
+      setSuccess('Super Admin account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        onLogin();
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -32,7 +66,18 @@ const RegisterAccount = ({ onLogin }) => {
           className="register-logo"
         />
         <h2 className="register-title">Create Super Admin Account</h2>
-        <p className="register-subtitle">Lead and manage Granby’s navigation operations.</p>
+        <p className="register-subtitle">Lead and manage Granby’s library operations.</p>
+        
+        {error && (
+          <div className="form-error" style={{ padding: '10px', background: '#fee2e2', color: '#dc2626', borderRadius: '8px', marginBottom: '16px', fontSize: '0.9rem', textAlign: 'center' }}>
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="form-success" style={{ padding: '10px', background: '#dcfce3', color: '#166534', borderRadius: '8px', marginBottom: '16px', fontSize: '0.9rem', textAlign: 'center' }}>
+            {success}
+          </div>
+        )}
       </div>
 
       <form className="register-form" onSubmit={handleSubmit}>
@@ -144,12 +189,14 @@ const RegisterAccount = ({ onLogin }) => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="register-submit-btn">
-          Register Account
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
+        <button type="submit" className="register-submit-btn" disabled={isLoading} style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}>
+          {isLoading ? 'Creating Account...' : 'Register Account'}
+          {!isLoading && (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          )}
         </button>
       </form>
 
